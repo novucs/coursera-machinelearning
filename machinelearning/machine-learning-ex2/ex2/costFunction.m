@@ -28,10 +28,16 @@ grad = zeros(size(theta));
 % htheta(x) = 1/(1 + e^(-x))
 %
 % J = (1/m) sum(m, i=1, y(i)*-log(sigmoid(x) + (1-y(i))*-log(1-sigmoid(x)))
+% gradient = (sigmoid(X * theta) - y) * X ??
+
 for i = 1:m
-  J += (1/m) * y(i) * -log(sigmoid(X)) + (1 - y(i)) * -log(1 - sigmoid(X));
+  sig = sigmoid(X(i,:) * theta);
+  J += (1/m) * sum(y(i) * -log(sig) + (1 - y(i)) * -log(1 - sig));
 end
 
+for i = 1:size(theta)
+  grad(i) = (1/m) * sum((sigmoid(X * theta) - y) .* X(:, i));
+end
 
 % =============================================================
 
