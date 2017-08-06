@@ -17,7 +17,7 @@ p = zeros(m, 1);
 
 
 for i = 1:m
-  p(i) = sigmoid(X(i,:) * theta);
+  p(i) = round(sigmoid(X(i,:) * theta));
 end
 
 
