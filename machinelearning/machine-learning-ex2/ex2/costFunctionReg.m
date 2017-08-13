@@ -18,21 +18,26 @@ grad = zeros(size(theta));
 %               derivatives of the cost w.r.t. each parameter in theta
 
 
+% ====== COST ======
+
+% Calculate the prediction for this particular input
+prediction = sigmoid(X * theta);
+
+% Error calculation:
+% 1/m * sum(-log(sig).'*y)    if y == 1
+% 1/m * sum(-log(1-sig).'*y)  if y == 0
+J += (1/m) * sum((-log(prediction).'*y) + (-log(1-prediction).'*(1-y)));
+
+% Regularization, deprecate usage of high theta values, ignoring the
+% first value of theta.
 theta1 = theta(2:size(theta));
-J = lambda * (theta1.' * theta1) / (2 * m);
-
-for i = 1:m
-  sig = sigmoid(X(i,:) * theta);
-  J += (1/m) * sum(y(i) * -log(sig) + (1 - y(i)) * -log(1 - sig));
-end
-
-grad(1) = (1/m) * sum((sigmoid(X * theta) - y) .* X(:, 1));
-
-for i = 2:size(theta)
-  grad(i) = (1/m) * sum((sigmoid(X * theta) - y) .* X(:, i)) + (lambda/m) * theta(i);
-end
+J += lambda * ((theta1.'*theta1) / (2*m));
 
 
+% ===== GRADIENT =====
+
+grad = (1/m) * sum(X .* (prediction - y)) + ((lambda/m) .* theta).';
+grad(1) = (1/m) * sum(prediction - y);
 
 % =============================================================
 
