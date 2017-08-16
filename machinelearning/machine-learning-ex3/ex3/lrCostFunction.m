@@ -36,14 +36,28 @@ grad = zeros(size(theta));
 %           grad = grad + YOUR_CODE_HERE (using the temp variable)
 %
 
+% ====== COST ======
+
+% Calculate the prediction for this particular input
+prediction = sigmoid(X * theta);
+
+% Error calculation:
+% 1/m * sum(-log(sig).'*y)    if y == 1
+% 1/m * sum(-log(1-sig).'*y)  if y == 0
+J += (1/m) * sum((-log(prediction).'*y) + (-log(1-prediction).'*(1-y)));
+
+% Regularization, deprecate usage of high theta values, ignoring the
+% first value of theta.
+theta1 = theta(2:size(theta));
+J += lambda * ((theta1.'*theta1) / (2*m));
 
 
+% ===== GRADIENT =====
 
+grad = (1/m) * sum(X .* (prediction - y)) + ((lambda/m) .* theta).';
+grad(1) = (1/m) * sum(prediction - y);
 
-
-
-
-
+size(theta)
 
 % =============================================================
 
