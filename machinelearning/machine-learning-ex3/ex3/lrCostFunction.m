@@ -57,8 +57,6 @@ J += lambda * ((theta1.'*theta1) / (2*m));
 grad = (1/m) * sum(X .* (prediction - y)) + ((lambda/m) .* theta).';
 grad(1) = (1/m) * sum(prediction - y);
 
-size(theta)
-
 % =============================================================
 
 grad = grad(:);
