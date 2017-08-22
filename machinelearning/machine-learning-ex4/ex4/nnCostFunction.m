@@ -73,7 +73,7 @@ hThetaX = sigmoid(z3);
 [val,prediction] = max(hThetaX,[],2);
 % for i = 1:m
 %   for k = 1:num_labels
-%     if k == y
+%     if k == y(i)
 %       J -= log(hThetaX(i,k));
 %     else
 %       J -= log(1-hThetaX(i,k));
