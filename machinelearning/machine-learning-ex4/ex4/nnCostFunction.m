@@ -62,35 +62,52 @@ Theta2_grad = zeros(size(Theta2));
 %               and Theta2_grad from Part 2.
 %
 
-
-
-
-X = [ones(m,1) X];
-z2 = X*Theta1.';
+% Forward propagation
+a1 = [ones(m,1) X];
+z2 = a1*Theta1.';
 a2 = [ones(size(z2,1),1) sigmoid(z2)];
 z3 = a2*Theta2.';
-hThetaX = sigmoid(z3);
-[val,prediction] = max(hThetaX,[],2);
-% for i = 1:m
-%   for k = 1:num_labels
-%     if k == y(i)
-%       J -= log(hThetaX(i,k));
-%     else
-%       J -= log(1-hThetaX(i,k));
-%     end
-%   end
-% end
-% J *= (1/m);
+a3 = sigmoid(z3);
 
+% Sanitise Y to binary classification
 modY = zeros(m, num_labels);
-
 for i = 1:m
   modY(i,y(i)) = 1;
 end
 
-J = -(1/m)*sum(sum(modY.*(log(hThetaX)) + (1-modY).*log(1-hThetaX)));
+% Calculate the error
+J = -(1/m)*sum(sum(modY.*(log(a3)) + (1-modY).*log(1-a3)));
+
+% Add regularization to the error
 J += (lambda/(2*m))*(sum(sum(sum(Theta1(:,2:end).^2)))+sum(sum(sum(Theta2(:,2:end).^2))));
 
+% Back propagation
+d3 = a3 - modY;
+d2 = (d3*Theta2) .* (a2.*(1-a2));
+d2 = d2(:,2:end);
+
+% size(a1)
+% size(a2)
+%
+% size(d2)
+
+for c = 1:m
+  % for i = 1:size(a1,2)
+  %   for j = 1:size(d2,2)
+  %     Theta1_grad(i,j) = a1(m,i).*d2(m,j);
+  %   end
+  % end
+  % for i = 1:size(a2,2)
+  %   for j = 1:size(d3,2)
+  %     Theta2_grad(i,j) = a2(m,i).*d3(m,j);
+  %   end
+  % end
+  Theta1_grad += a1(i,:) .* d2(i,:).';
+  Theta2_grad += a2(i,:) .* d3(i,:).';
+end
+
+Theta1_grad = Theta1_grad .* (1/m);
+Theta2_grad = Theta2_grad .* (2/m);
 
 % -------------------------------------------------------------
 
