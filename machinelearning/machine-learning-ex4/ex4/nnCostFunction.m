@@ -81,33 +81,55 @@ J = -(1/m)*sum(sum(modY.*(log(a3)) + (1-modY).*log(1-a3)));
 % Add regularization to the error
 J += (lambda/(2*m))*(sum(sum(sum(Theta1(:,2:end).^2)))+sum(sum(sum(Theta2(:,2:end).^2))));
 
-% Back propagation
-d3 = a3 - modY;
-d2 = (d3*Theta2) .* (a2.*(1-a2));
-d2 = d2(:,2:end);
+for t = 1:m
+  a1 = [1; X(t,:).'];
 
-% size(a1)
-% size(a2)
-%
-% size(d2)
+  z2 = Theta1 * a1;
+  a2 = [1; sigmoid(z2)];
 
-for c = 1:m
-  % for i = 1:size(a1,2)
-  %   for j = 1:size(d2,2)
-  %     Theta1_grad(i,j) = a1(m,i).*d2(m,j);
-  %   end
-  % end
-  % for i = 1:size(a2,2)
-  %   for j = 1:size(d3,2)
-  %     Theta2_grad(i,j) = a2(m,i).*d3(m,j);
-  %   end
-  % end
-  Theta1_grad += a1(i,:) .* d2(i,:).';
-  Theta2_grad += a2(i,:) .* d3(i,:).';
+  z3 = Theta2 * a2;
+  a3 = sigmoid(z3);
+
+  delta_3 = a3 - modY(t,:).';
+  delta_2 = (Theta2.' * delta_3) .* a2.*(1-a2);
+  delta_2(1,:) = [];
+
+  Theta1_grad = Theta1_grad + delta_2 * a1.';
+  Theta2_grad = Theta2_grad + delta_3 * a2.';
 end
 
-Theta1_grad = Theta1_grad .* (1/m);
-Theta2_grad = Theta2_grad .* (2/m);
+Theta1_grad(:,2:end) += lambda*Theta1(:,2:end);
+Theta2_grad(:,2:end) += lambda*Theta2(:,2:end);
+Theta1_grad = (1/m) * Theta1_grad;
+Theta2_grad = (1/m) * Theta2_grad;
+
+% % Back propagation
+% d3 = a3 - modY;
+% d2 = (d3*Theta2) .* (a2.*(1-a2));
+% d2 = d2(:,2:end);
+%
+% % size(a1)
+% % size(a2)
+% %
+% % size(d2)
+%
+% for c = 1:m
+%   % for i = 1:size(a1,2)
+%   %   for j = 1:size(d2,2)
+%   %     Theta1_grad(i,j) = a1(m,i).*d2(m,j);
+%   %   end
+%   % end
+%   % for i = 1:size(a2,2)
+%   %   for j = 1:size(d3,2)
+%   %     Theta2_grad(i,j) = a2(m,i).*d3(m,j);
+%   %   end
+%   % end
+%   Theta1_grad += a1(i,:) .* d2(i,:).';
+%   Theta2_grad += a2(i,:) .* d3(i,:).';
+% end
+%
+% Theta1_grad = Theta1_grad .* (1/m);
+% Theta2_grad = Theta2_grad .* (2/m);
 
 % -------------------------------------------------------------
 
