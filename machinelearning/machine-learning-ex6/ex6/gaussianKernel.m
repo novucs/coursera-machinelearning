@@ -18,9 +18,11 @@ sim = 0;
 
 
 
+difference=(x1-x2);
+sim = exp(-(difference.'*difference)/((2*sigma^2)));
 
 
 
 % =============================================================
-    
+
 end
