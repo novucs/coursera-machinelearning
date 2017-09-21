@@ -41,15 +41,11 @@ Theta_grad = zeros(size(Theta));
 %
 
 predictions = X*Theta.';
-errors = R.*(X*Theta.'-Y);
-J = sum(sum(errors.^2))/2; % Original cost.
-J = J + (lambda / 2) * (sum(sum(Theta.^2)) + sum(sum(X.^2))); % Regularization.
-K = size(X,2); % Should be the same as size(Theta,2) as theres only 1 output.
-
-for k = 1:K
-  X_grad(:,k) = errors*Theta(:,k) + lambda * X(:,k);
-  Theta_grad(:,k) = errors.'*X(:,k) + lambda * Theta(:,k);
-end
+errors = R.*(predictions-Y);
+regularization = (lambda / 2) * (sum(sum(Theta.^2)) + sum(sum(X.^2)));
+J = sum(sum(errors.^2))/2 + regularization;
+X_grad = errors * Theta + lambda * X;
+Theta_grad = errors.' * X + lambda * Theta;
 
 % =============================================================
 
